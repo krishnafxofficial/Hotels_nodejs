@@ -17,13 +17,48 @@
 
 // console.log(typeof json);
 
-const express = require('express')
-const app = express()
- const db = require('./db')
+const express = require('express');
+const app = express();
+ const db = require('./db');
+ const passport = require('passport');
+ const localStrategy = require('passport-local').Strategy;
+
 
  const bodyParser  = require('body-parser');
  app.use(bodyParser.json()); // req.body
- app.get('/', function(req,res){
+
+ // MiddleWare function
+ const logRequest = (req, res, next) => {
+        console.log(`[${new Date().toLocaleString()}] Request Made to : ${req.originalUrl}`);
+        next(); // Move on to the next phase.
+      }   
+      app.use(logRequest); 
+
+
+    passport.use(new localStrategy (async (USERNAME , password , done) => { // done provide the passport function
+         // authentication logic here
+         try{
+          console.log('Received Credentials :',USERNAME , password);
+          const user =await Person.findOne({username : USERNAME});
+          if(!user)
+            return done(null, false, {message : 'Incorrect username .'});
+
+          const isPasswordMatch = user.password === password ? true : false;
+          if (isPasswordMatch){
+            return done(null,user);
+          }else{
+            return done(null,false, {message : 'Incorrect Password. '})
+          }
+          
+
+         }catch(err){
+               return done(err);
+         }
+      }))
+
+      app.use(passport.initialize());
+
+ app.get('/',passport.authenticate('local', {session : false}),function(req,res){
    res.send('Welcome to our Hotel')
  }
 )
@@ -152,6 +187,7 @@ const app = express()
 // Import the router files
 const personRoutes = require('./routes/personRoutes');
 const menuItemRoutes = require('./routes/menuItemRoutes');
+const Person = require('./models/Person');
 
  // Use the Routers
  app.use('/person',personRoutes)
