@@ -20,12 +20,14 @@
 const express = require('express');
 const app = express();
  const db = require('./db');
+ require('dotenv').config();
  const passport = require('passport');
  const localStrategy = require('passport-local').Strategy;
 
 
  const bodyParser  = require('body-parser');
  app.use(bodyParser.json()); // req.body
+ const PORT = process.env.PORT || 3000;
 
  // MiddleWare function
  const logRequest = (req, res, next) => {

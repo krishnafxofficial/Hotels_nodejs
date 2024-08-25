@@ -44,14 +44,14 @@ const personSchema = new mongoose.Schema({
         type : Number,
         requied : true
     },
-    userName : {
-        type : String,
-        required : true
-    },
-    password : {
-        type : String,
-        required : true
-    }
+    // userName : {
+    //     type : String,
+    //     required : true
+    // },
+    // password : {
+    //     type : String,
+    //     required : true
+    //}
 })
 
 // Create person model
